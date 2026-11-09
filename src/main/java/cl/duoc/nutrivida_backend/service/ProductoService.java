@@ -2,56 +2,45 @@ package cl.duoc.nutrivida_backend.service;
 
 import cl.duoc.nutrivida_backend.model.Producto;
 import cl.duoc.nutrivida_backend.repository.ProductoRepository;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductoService {
 
-    private final ProductoRepository productoRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
 
-    // Inyección del repositorio por constructor
-    public ProductoService(ProductoRepository productoRepository) {
-        this.productoRepository = productoRepository;
-    }
-
-    // Obtener todos los registros
-    public List<Producto> obtenerTodos() {
+    public List<Producto> getProductos() {
         return productoRepository.findAll();
     }
 
-    // Buscar por ID (devuelve null si no existe)
-    public Producto buscarPorId(Long id) {
-        return productoRepository.findById(id).orElse(null);
+    public Optional<Producto> getProducto(Integer id) {
+        return productoRepository.findById(id);
     }
 
-    // Guardar / crear nuevo registro
-    public Producto guardar(Producto producto) {
-        producto.setId(null); // asegura que se cree uno nuevo
+    public Producto saveProducto(Producto producto) {
         return productoRepository.save(producto);
     }
 
-    // Actualizar registro existente (devuelve null si no existe)
-    public Producto actualizar(Long id, Producto datos) {
-        Producto existente = buscarPorId(id);
-        if (existente == null) {
-            return null;
+    public Producto updateProducto(Integer id, Producto producto) {
+        Optional<Producto> existe = getProducto(id);
+
+        if (existe.isEmpty()) {
+            throw new RuntimeException("No encontrado");
+        } else {
+            producto.setId(id);
+            return productoRepository.save(producto);
         }
-        existente.setNombre(datos.getNombre());
-        existente.setIcono(datos.getIcono());
-        existente.setResumen(datos.getResumen());
-        existente.setDescripcion(datos.getDescripcion());
-        existente.setPrecio(datos.getPrecio());
-        existente.setImagen(datos.getImagen());
-        return productoRepository.save(existente);
     }
 
-    // Eliminar por ID (devuelve false si no existe)
-    public boolean eliminar(Long id) {
-        if (!productoRepository.existsById(id)) {
-            return false;
-        }
-        productoRepository.deleteById(id);
-        return true;
+    public void deleteProducto(Integer id) {
+        if (productoRepository.existsById(id))
+            productoRepository.deleteById(id);
+        else
+            throw new RuntimeException("No encontrado");
     }
 }

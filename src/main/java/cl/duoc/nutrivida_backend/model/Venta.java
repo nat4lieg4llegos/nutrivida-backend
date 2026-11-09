@@ -1,16 +1,14 @@
 package cl.duoc.nutrivida_backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
+@Table(name = "ventas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,14 +16,14 @@ public class Venta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    // Se guardan solo los ID, sin relaciones JPA (lo pide la pauta)
-    @Column(nullable = false)
-    private Long idCliente;
+    // Sin relaciones JPA: se guarda solo el ID del cliente y del producto
+    @Column(name = "id_cliente", nullable = false)
+    private Integer idCliente;
 
-    @Column(nullable = false)
-    private Long idProducto;
+    @Column(name = "id_producto", nullable = false)
+    private Integer idProducto;
 
     @Column(nullable = false)
     private Integer cantidad;
@@ -33,7 +31,7 @@ public class Venta {
     @Column(nullable = false)
     private Integer total;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "forma_pago", nullable = false, length = 20)
     private String formaPago;
 
     @Column(nullable = false)

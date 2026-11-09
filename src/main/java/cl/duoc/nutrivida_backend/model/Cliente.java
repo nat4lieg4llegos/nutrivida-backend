@@ -1,16 +1,14 @@
 package cl.duoc.nutrivida_backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
+@Table(name = "clientes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +16,7 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false, length = 50)
     private String nombre;
@@ -26,19 +24,18 @@ public class Cliente {
     @Column(nullable = false, length = 50)
     private String apellido;
 
-    @Column(nullable = false, unique = true, length = 12)
+    @Column(nullable = false, length = 12, unique = true)
     private String rut;
 
-    @Column(nullable = false)
+    @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
     @Column(length = 12)
     private String telefono;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String email;
 
-    // Campos de contexto de NutriVida
     private Double peso;
 
     private Integer estatura;

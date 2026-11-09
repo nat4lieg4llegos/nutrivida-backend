@@ -2,68 +2,67 @@ package cl.duoc.nutrivida_backend.controller;
 
 import cl.duoc.nutrivida_backend.model.Venta;
 import cl.duoc.nutrivida_backend.service.VentaService;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/ventas")
+@RequestMapping("/api/v1/ventas")
 public class VentaController {
 
-    private final VentaService ventaService;
+    @Autowired
+    private VentaService ventaService;
 
-    // Inyección del servicio por constructor
-    public VentaController(VentaService ventaService) {
-        this.ventaService = ventaService;
-    }
-
-    // GET /api/ventas -> obtener todos
     @GetMapping
-    public List<Venta> obtenerTodos() {
-        return ventaService.obtenerTodos();
+    public ResponseEntity<List<Venta>> listarVentas() {
+        List<Venta> ventas = ventaService.getVentas();
+
+        if (ventas.isEmpty())
+            return ResponseEntity.noContent().build(); // 204
+        else
+            return ResponseEntity.ok(ventas); // 200
     }
 
-    // GET /api/ventas/{id} -> buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Venta> buscarPorId(@PathVariable Long id) {
-        Venta venta = ventaService.buscarPorId(id);
-        if (venta == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(venta);
+    public ResponseEntity<Venta> buscarPorId(@PathVariable Integer id) {
+        Optional<Venta> venta = ventaService.getVenta(id);
+
+        if (venta.isPresent())
+            return ResponseEntity.ok(venta.get()); // 200
+        else
+            return ResponseEntity.notFound().build(); // 404
     }
 
-    // POST /api/ventas -> crear
     @PostMapping
-    public ResponseEntity<Venta> guardar(@RequestBody Venta venta) {
-        Venta nueva = ventaService.guardar(venta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    public ResponseEntity<Venta> agregarVenta(@RequestBody Venta venta) {
+        Venta nuevaVenta = ventaService.saveVenta(venta);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED) // 201
+                .body(nuevaVenta);
     }
 
-    // PUT /api/ventas/{id} -> actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Venta> actualizar(@PathVariable Long id, @RequestBody Venta venta) {
-        Venta actualizada = ventaService.actualizar(id, venta);
-        if (actualizada == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Venta> editarVenta(@RequestBody Venta venta, @PathVariable Integer id) {
+        try {
+            Venta actualizada = ventaService.updateVenta(id, venta);
+            return ResponseEntity.ok(actualizada); // 200
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build(); // 404
         }
-        return ResponseEntity.ok(actualizada);
     }
 
-    // DELETE /api/ventas/{id} -> eliminar
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        if (!ventaService.eliminar(id)) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> eliminarVenta(@PathVariable Integer id) {
+        try {
+            ventaService.deleteVenta(id);
+            return ResponseEntity.noContent().build(); // 204
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build(); // 404
         }
-        return ResponseEntity.noContent().build();
     }
 }

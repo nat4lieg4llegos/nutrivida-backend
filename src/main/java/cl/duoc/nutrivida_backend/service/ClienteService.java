@@ -2,59 +2,45 @@ package cl.duoc.nutrivida_backend.service;
 
 import cl.duoc.nutrivida_backend.model.Cliente;
 import cl.duoc.nutrivida_backend.repository.ClienteRepository;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-    // Inyección del repositorio por constructor
-    public ClienteService(ClienteRepository clienteRepository) {
-        this.clienteRepository = clienteRepository;
-    }
-
-    // Obtener todos los registros
-    public List<Cliente> obtenerTodos() {
+    public List<Cliente> getClientes() {
         return clienteRepository.findAll();
     }
 
-    // Buscar por ID (devuelve null si no existe)
-    public Cliente buscarPorId(Long id) {
-        return clienteRepository.findById(id).orElse(null);
+    public Optional<Cliente> getCliente(Integer id) {
+        return clienteRepository.findById(id);
     }
 
-    // Guardar / crear nuevo registro
-    public Cliente guardar(Cliente cliente) {
-        cliente.setId(null); // asegura que se cree uno nuevo
+    public Cliente saveCliente(Cliente cliente) {
         return clienteRepository.save(cliente);
     }
 
-    // Actualizar registro existente (devuelve null si no existe)
-    public Cliente actualizar(Long id, Cliente datos) {
-        Cliente existente = buscarPorId(id);
-        if (existente == null) {
-            return null;
+    public Cliente updateCliente(Integer id, Cliente cliente) {
+        Optional<Cliente> existe = getCliente(id);
+
+        if (existe.isEmpty()) {
+            throw new RuntimeException("No encontrado");
+        } else {
+            cliente.setId(id);
+            return clienteRepository.save(cliente);
         }
-        existente.setNombre(datos.getNombre());
-        existente.setApellido(datos.getApellido());
-        existente.setRut(datos.getRut());
-        existente.setFechaNacimiento(datos.getFechaNacimiento());
-        existente.setTelefono(datos.getTelefono());
-        existente.setEmail(datos.getEmail());
-        existente.setPeso(datos.getPeso());
-        existente.setEstatura(datos.getEstatura());
-        existente.setObjetivo(datos.getObjetivo());
-        return clienteRepository.save(existente);
     }
 
-    // Eliminar por ID (devuelve false si no existe)
-    public boolean eliminar(Long id) {
-        if (!clienteRepository.existsById(id)) {
-            return false;
-        }
-        clienteRepository.deleteById(id);
-        return true;
+    public void deleteCliente(Integer id) {
+        if (clienteRepository.existsById(id))
+            clienteRepository.deleteById(id);
+        else
+            throw new RuntimeException("No encontrado");
     }
 }
