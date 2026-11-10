@@ -1,0 +1,4 @@
+INSERT INTO clientes (nombre, apellido, rut, fecha_nacimiento, telefono, email, peso, estatura, objetivo) VALUES
+                                                                                                              ('Ana', 'Rojas', '12.345.678-9', '1990-05-10', '+56912345678', 'ana.rojas@gmail.com', 63.0, 162, 'Bajar de peso'),
+                                                                                                              ('Jorge', 'Pérez', '15.678.234-5', '1985-11-22', '+56987654321', 'jorge.perez@outlook.com', 82.0, 175, 'Controlar diabetes o hipertensión'),
+                                                                                                              ('Valentina', 'Soto', '19.876.543-2', '1998-03-14', '+56923456789', 'valentina.soto@duocuc.cl', 58.5, 165, 'Mejorar rendimiento deportivo');
