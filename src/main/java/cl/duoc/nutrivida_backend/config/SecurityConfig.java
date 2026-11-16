@@ -27,6 +27,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()                 // login público
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger público
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()           // preflight CORS del navegador
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()      // GET públicos
                         .anyRequest().authenticated()                                     // POST, PUT, DELETE con token
                 )

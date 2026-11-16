@@ -42,6 +42,15 @@ Las migraciones están en `src/main/resources/db/migration`:
 
 Flyway registra las migraciones aplicadas en la tabla `flyway_schema_history`. Hibernate no modifica las tablas (`spring.jpa.hibernate.ddl-auto=none`).
 
+## Conexión con el frontend React (CORS)
+
+El frontend **Nutrivida2.0** (React + Vite, `http://localhost:5173`) consume esta API con axios.
+
+- `config/CorsConfig.java` permite peticiones a `/api/**` desde `http://localhost:5173` con los métodos GET, POST, PUT, DELETE y OPTIONS.
+- `SecurityConfig` deja pasar las peticiones `OPTIONS` (preflight del navegador) sin token.
+
+Orden para probar todo junto: MySQL en XAMPP → este backend → `npm run dev` en el frontend.
+
 ## Documentación (Swagger)
 
 Con la aplicación corriendo, abrir:
@@ -125,7 +134,7 @@ Para ejecutarlas en IntelliJ: abrir la clase y presionar ▶ junto al nombre. El
 
 ```
 src/main/java/cl/duoc/nutrivida_backend/
-├── config/        SwaggerConfig, SecurityConfig
+├── config/        SwaggerConfig, SecurityConfig, CorsConfig
 ├── controller/    ProductoController, ClienteController, VentaController, AuthController
 ├── model/         Producto, Cliente, Venta, LoginRequest
 ├── repository/    ProductoRepository, ClienteRepository, VentaRepository
